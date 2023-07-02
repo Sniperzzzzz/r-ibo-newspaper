@@ -1,6 +1,9 @@
+{% load static %}
+
 <html>
   <header>
     <h1>IBO Newspaper</h1>
+    <link type="stylesheet" href="{% static 'web/styles.css' %}">
     <title>{% block title %}{% endblock %}</title>
     <a href=""><button>Home</button></a>
     <a href=""><button>Latest Articles</button></a>
