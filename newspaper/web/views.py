@@ -33,6 +33,5 @@ def index(request):
 def article_view(request, articleID):
     if request.method == "GET":
         #return render(request, "web/new_layout.html", {"site": Article.objects.get(article_id=articleID), "posts": Article.objects.all()[0:5]})
-        us = request.user
-        
+        #us = request.api_key
         return JsonResponse({"site": Article.objects.get(article_id=articleID), "posts": Article.objects.all()[0:5]})

@@ -3,7 +3,7 @@ from django.urls import path, include
 
 app_name = "web"
 urlpatterns = [
-    path("", index, name="front-page"),
-    path("article/<str:articleID>", article_view, name="article"), 
-    path("login", login_view, name="login")
+    #path("", index, name="front-page"),
+    path("article/<str:articleID>", article_view, name="article")
+    #path("login", login_view, name="login")
 ]
