@@ -3,30 +3,73 @@ from uuid import *
 
 # from django.core import serializers
 from django.http import HttpRequest, JsonResponse
-from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render, get_object_or_404
 from web.models import *
 
 
 # Create your views here.
 def index(request: HttpRequest):
-    return render(request, "web/new_layout.html")
+    return render(
+        request,
+        "web/home.html",
+        {
+            "posts": Article.objects.filter(featured=True)[0:5],
+        }
+        )
+
+def contact(request: HttpRequest):
+    return render(
+		request,
+		"web/contact.html"
+	)
+
+def category_detail(request: HttpRequest, slug):
+    category = get_object_or_404(Classification, slug=slug)
+    articles = Article.objects.filter(article_classification=category).order_by('-date_published')
+    paginator = Paginator(articles, 3)
+    page = request.GET.get('page')
+    try:
+        articles = paginator.page(page)
+    except PageNotAnInteger:
+        articles = paginator.page(1)
+    except EmptyPage:
+        articles = paginator.page(paginator.num_pages)
+    context = {
+        'category': category,
+        'posts': articles,
+    }
+    return render(request, 'web/category_articles.html', context)
 
 
+def about(request: HttpRequest):
+    return render(
+		request,
+		"web/about.html"
+	)
+    
+def posts(request):
+    article_list = Article.objects.all().order_by('-date_published')
+    paginator = Paginator(article_list, 3)
+    page = request.GET.get('page')
+    try:
+        articles = paginator.page(page)
+    except PageNotAnInteger:
+        articles = paginator.page(1)
+    except EmptyPage:
+        articles = paginator.page(paginator.num_pages)
+
+    return render(request, 'web/posts.html', {'posts': articles})
+ 
 def article_view(request: HttpRequest, articleID: UUID):
     if request.method == "GET":
-        """
         return render(
             request,
-            "web/new_layout.html",
+            "web/article.html",
             {
-                "site": Article.objects.get(article_id=articleID),
-                "posts": Article.objects.all()[0:5],
+                "page": Article.objects.get(article_id=articleID),
             }
-        )
-        """
-        return JsonResponse(
-            {"article": Article.objects.get(article_id=articleID).__dict__}, status=200
-        )
+        ) 
 
 
 def search_result(request: HttpRequest, searchKey: str):
